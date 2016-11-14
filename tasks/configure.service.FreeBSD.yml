@@ -1,0 +1,35 @@
+---
+
+- name: set defaults for startup service (FreeBSD)
+  lineinfile: dest=/etc/defaults/rc.conf line='{{__openvpn_service_name }}_enable="NO"'
+
+- name: Configure service option, config file (FreeBSD)
+  lineinfile: dest="/etc/defaults/rc.conf" line={{ __openvpn_service_name }}_configfile="{{openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ openvpn_default_instance_name }}.conf" state=present
+
+- name: Configure service option, config dir (FreeBSD)
+  lineinfile: dest="/etc/defaults/rc.conf" line='{{ __openvpn_service_name }}_dir="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}"'
+
+- name: symlink non-default instance service script (FreeBSD)
+  file: src=/usr/local/etc/rc.d/openvpn dest="/usr/local/etc/rc.d/{{ __openvpn_service_name }}" state=link
+
+- name: Configure service (FreeBSD)
+  service: name={{ __openvpn_service_name }} enabled=yes state=started
+  register: __openvpn_service_mgmt
+
+# todo or not to do...
+- name: Create newsyslog directory (FreeBSD)
+  file: >
+    name="/usr/local/etc/newsyslog.conf.d"
+    owner=root
+    group={{ openvpn_root_group }}
+    state=directory
+  when:
+    - __my_openvpn_instance.newsyslog_settings|default('')
+    - false
+
+#todo or not to do...
+- name: Configure newsyslog (FreeBSD)
+  template: src=newsyslog.conf.j2 dest=/usr/local/etc/newsyslog.conf.d/{{ __openvpn_service_name }}.conf
+  when: 
+    - __my_openvpn_instance.newsyslog_settings|default('')
+    - false

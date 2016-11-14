@@ -1,0 +1,35 @@
+# note: the template is not linux & openbsd compatbile..need later tweakto support them
+
+#TODO easyvar v2 support
+- name: detect easyrsa version v2.x
+  set_fact:
+    __openvpn_easy_var_version: 2
+  when: false
+
+- name: detect easyrsa version 3.x
+  set_fact:
+    __openvpn_easy_var_version: 3
+  when: true
+ 
+- name: Prepare openvpn PKI vars for server instance
+  template: >
+    src=easyrsa-vars_easyrsa_v{{ __openvpn_easy_var_version }}.j2
+    dest={{openvpn_system_etcdir }}/{{ __openvpn_service_name }}/easyrsa-vars
+    owner=root
+    group={{ openvpn_root_group }}
+    mode=0755
+
+- name: Prepare PKI shell script for server instance
+  template: >
+    src=build-server_easyrsa_v{{ __openvpn_easy_var_version }}.sh.j2
+    dest={{openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-server.sh
+    owner=root
+    group={{ openvpn_root_group }}
+    mode=0755
+
+- name: run PKI shell script for server instance
+  command: "{{openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-server.sh"
+  args:
+    creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/server.crt"
+  notify: service restart
+

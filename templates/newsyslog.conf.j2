@@ -1,0 +1,2 @@
+# 
+{{ openvpn_log_dir }}/{{ openvpn_service_name }}.log				600	{{ __myopenvpn_instance.newsyslog_days_to_keep|default(7) }}	*	@TOO	JC

@@ -1,0 +1,33 @@
+# this file is managed by ansible
+# do NOT edit by hand !
+
+export EASYRSA="{{ openvpn_easyrsa_v3_dir }}"
+
+export EASYRSA_OPENSSL="openssl"
+
+export EASYRSA_PKI="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir  }}"
+
+export EASYRSA_SSL_CONF="{{openvpn_easyrsa_v3_dir }}/openssl-1.0.cnf"
+
+export EASYRSA_DN="cn_only"
+
+export EASYRSA_REQ_COUNTRY="{{ __my_openvpn_instance.openvpn_key_country }}"
+
+export EASYRSA_REQ_PROVINCE="{{ __my_openvpn_instance.openvpn_key_province }}"
+
+export EASYRSA_REQ_CITY="{{ __my_openvpn_instance.openvpn_key_city }}"
+
+export EASYRSA_REQ_ORG="{{ __my_openvpn_instance.openvpn_key_org }}"
+
+export EASYRSA_REQ_EMAIL="{{ __my_openvpn_instance.openvpn_key_email }}"
+
+export EASYRSA_REQ_OU="{{ __my_openvpn_instance.openvpn_key_ou }}"
+
+export EASYRSA_KEY_SIZE="{{ __my_openvpn_instance.openvpn_key_size }}"
+
+export EASYRSA_CA_EXPIRE=3650
+
+export EASYRSA_CERT_EXPIRE="{{ __my_openvpn_instance.openvpn_key_expire }}"
+
+export EASYRSA_BATCH="yes"
+

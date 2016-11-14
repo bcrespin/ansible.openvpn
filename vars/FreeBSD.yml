@@ -1,0 +1,12 @@
+---
+# vars file for boxeman.openvpn
+openvpn_role_supported: true
+openvpn_default_instance_name: openvpn
+openvpn_default_service_name: openvpn
+openvpn_system_etcdir: /usr/local/etc
+openvpn_root_group: wheel
+openvpn_group: nobody
+openvpn_easyrsa_v3_binary: '/usr/local/bin/easyrsa'
+openvpn_easyrsa_v3_dir: '/usr/local/share/easy-rsa'
+openvpn_pam_plugin_distribution: '/usr/local/lib/openvpn/plugins/openvpn-plugin-auth-pam.so'
+openvpn_ldap_plugin_distribution: '/usr/local/lib/openvpn-auth-ldap.so'

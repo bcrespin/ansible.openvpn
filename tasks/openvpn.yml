@@ -1,0 +1,59 @@
+---
+
+- name: Gathering OS specific variables
+  include_vars: '{{ item }}'
+  with_first_found:
+    - files:
+      - "{{ ansible_distribution }}.{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: 'true'
+
+- name: OS unsupported
+  fail: msg=" This roles is currently unsupported with your OS/Linux Distro"
+  when: openvpn_role_supported is undefined
+
+- name: test if instance name provided, unless use default
+  set_fact:
+    openvpn_instance: "{{ __openvpn_instance_default }}"
+  when: openvpn_instance is not defined
+
+- name: merge openvpn_instance with default
+  set_fact:
+    __my_openvpn_instance: "{{ __openvpn_instance_default|combine( openvpn_instance,recursive=True) }}"
+
+- name: feature still not implemented
+  fail: msg="ldap authentication still not implemented"
+  when: __my_openvpn_instance.openvpn_use_ldap
+
+- name: check simple auth must have a password
+  fail: msg="simple authentication need a password" 
+  when: 
+    - __my_openvpn_instance.openvpn_use_simple_auth
+    - not __my_openvpn_instance.openvpn_use_simple_auth_password
+
+#- name: debug __my_openvpn_instance
+#  debug: var=__my_openvpn_instance
+
+#- name: debug
+#  debug: var=openvpn_instance_name
+- name: check if at least one authentication is enabled
+  debug: msg="NO authentication option enabled..." 
+  when: 
+    - not __my_openvpn_instance.openvpn_use_pam
+    - not __my_openvpn_instance.openvpn_use_ldap
+    - not __my_openvpn_instance.openvpn_use_certs
+    - not __my_openvpn_instance.openvpn_use_simple_auth
+    - not __my_openvpn_instance.openvpn_use_tls_auth
+  register: result
+
+- name: fail as no authentication option enabled 
+  fail: msg="NO authentication option enabled..."
+  when: not result|skipped
+
+- name: Install (FreeBSD)
+  include: install.FreeBSD.yml
+  when: ansible_os_family == "FreeBSD"
+
+- name: Configure Openvpn
+  include: configure.openvpn.yml

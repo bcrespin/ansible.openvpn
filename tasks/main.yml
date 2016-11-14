@@ -1,0 +1,24 @@
+---
+# tasks file for boxeman.openvpn
+- name: setup name of service default instance
+  set_fact:
+    __openvpn_service_name: "{{ openvpn_default_service_name }}"
+  when: openvpn_instance_name == 'default'
+  tags: ['openvpn']
+
+- name:  setup name of service for named instance
+  set_fact:
+    __openvpn_service_name: "openvpn_{{ openvpn_instance_name }}"
+  when: openvpn_instance_name != 'default'
+  tags: ['openvpn']
+
+- name: Stop/disable service instance
+  service: name="{{ __openvpn_service_name }}" state=stopped  enabled=no
+  when: not openvpn_role_enabled
+  tags: ['openvpn']
+
+- include: openvpn.yml
+  when: openvpn_role_enabled
+  tags: ['openvpn']
+
+

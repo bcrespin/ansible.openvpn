@@ -1,0 +1,13 @@
+# this file is managed by ansible
+# do NOT edit by hand !
+
+{% if __my_openvpn_instance.openvpn_use_pam_users %}
+auth	required	pam_pwdfile.so pwdfile={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/pam_users.txt
+account required        pam_permit.so
+{% else %}
+{% if __my_openvpn_instance.openvpn_use_pam_group_members %}
+auth    required        pam_group.so group={{ __my_openvpn_instance.openvpn_use_pam_group_members}}
+{% endif %}
+auth	required	pam_unix.so
+account required       	pam_unix.so
+{% endif %}

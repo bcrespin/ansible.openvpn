@@ -1,0 +1,7 @@
+---
+# handlers file for boxeman.openvpn
+
+- name: service restart
+  service: name="{{ __openvpn_service_name }}" state=restarted  enabled=yes
+#  when:
+#    - not __openvpn_service_mgmt.changed 

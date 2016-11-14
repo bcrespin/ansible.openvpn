@@ -1,0 +1,86 @@
+---
+openvpn_role_enabled: true
+
+# default instance has to be called default, but config name & service name, will be changed to 'server' or 'openvpn' depdending of OS
+# as Linux distro use by default server.conf and FreebSD openvpn.conf for config name.
+# if other instance declared, instance name will be server_{{ instance }} or openvpn_{{ }}, will be changed to 'server' or 'openvpn' depdending of OS
+# openvpn_etcdir variable will be generated with openvpn_system_etcdir and instance name
+# as Linux distro  seems to use server.conf and FreebSD openvpn.conf
+
+openvpn_instance_name: 'default'
+openvpn_system_etcdir: /etc
+openvpn_user: nobody
+openvpn_group: nobody
+openvpn_root_group: root
+openvpn_log_dir: /var/log/openvpn/
+
+# per instance default settings :
+__openvpn_instance_default:
+  openvpn_keydir: "keys"                             # full or relative path
+  # Default settings (See OpenVPN documentation)
+  openvpn_host: "{{inventory_hostname}}"              # The server address
+  openvpn_port: 1194
+  openvpn_proto: udp
+  openvpn_dev: tun
+  openvpn_server: 10.8.0.0 255.255.255.0
+  openvpn_max_clients: 100
+  openvpn_keepalive: "10 120"
+  openvpn_ifconfig_pool_persist: ipp.txt
+  openvpn_comp_lzo: yes                            
+  openvpn_auth: 'SHA1'
+  openvpn_cipher: 'AES-256-CBC' 
+  openvpn_status: openvpn-status.log
+  openvpn_verb: 3
+  openvpn_resolv_retry: infinite
+  openvpn_server_options: []                        # Additional server options
+                                                    # openvpn_server_options:
+                                                    # - dev-node MyTap
+                                                    # - client-to-client
+  openvpn_client_options: []                        # Additional client options
+                                                    # openvpn_client_options:
+                                                    # - dev-node MyTap
+                                                    # - client-to-client
+  openvpn_tls_cipher: 'TLS-DHE-RSA-WITH-AES-256-CBC-SHA'
+  openvpn_tls_version_min: '1.2'
+  openvpn_use_external_pki: no					# if no, use exernal pki
+  openvpn_dhparam: ''
+  openvpn_ca_cert: ''
+  openvpn_server_key: ''
+  openvpn_crl: ''
+  openvpn_key_country: FR
+  openvpn_key_province: FR
+  openvpn_key_city: Paris
+  openvpn_key_org: ansible-role
+  openvpn_key_email: someone@somewhat
+  openvpn_key_ou: ansible-team
+  openvpn_key_size: 2048
+  openvpn_key_expire: 365
+  openvpn_clients_certs: []                         # Make clients certificate
+  openvpn_clients_certs_revoke: []                  # Revoke clients certificates
+
+#  openvpn_clients_ovpn_file_dir: "clients_ovpn"
+  openvpn_clients_config_dir: 'ccd'
+
+  openvpn_use_certs: yes
+
+  openvpn_tls_auth: yes
+ 
+  openvpn_use_pam: no
+  openvpn_use_pam_group_members: ''
+  openvpn_use_pam_users: []                       # If empty use system users
+                                                  # otherwise use users from the option
+                                                  # openvpn_use_pam_users:
+                                                  # - { name: user, password: password }
+  openvpn_use_pam_users_remove: []
+  
+  openvpn_check_username_in_cert: no
+ 
+  openvpn_use_ldap: no
+  openvpn_ldap_tlsenable: no
+  openvpn_ldap_follow_referrals: no
+
+  openvpn_use_simple_auth: no
+  openvpn_use_simple_auth_password: ""		# sha256 encrypted password
+
+  openvpn_client_to_client: no
+

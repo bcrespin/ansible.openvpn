@@ -1,0 +1,19 @@
+- name: Install openvpn (FreeBSD)
+  pkgng: name=openvpn state=present
+
+- name: Install openvpn ldap (FreeBSD)
+  pkgng: name=openvpn-auth-ldap state=present
+  when: __my_openvpn_instance.openvpn_use_ldap
+
+- name: Install PAM dependencies (FreeBSD)
+  pkgng: name={{ item }} state=present
+  with_items: [ py27-passlib, pam_pwdfile]
+  when:
+   - __my_openvpn_instance.openvpn_use_pam
+   - __my_openvpn_instance.openvpn_use_pam_users
+
+- name: Install easyrsa (FreeBSD)
+  pkgng: name=easy-rsa state=present
+  when: 
+   - not __my_openvpn_instance.openvpn_use_external_pki
+   - __my_openvpn_instance.openvpn_use_certs

@@ -1,0 +1,110 @@
+---
+- name: Create configuration directory
+  file: > 
+    path={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}
+    state=directory
+    mode=0755
+    owner=root
+    group="{{ openvpn_root_group }}"
+
+- name: Create log directory
+  file: >
+    path="{{ openvpn_log_dir }}" state=directory owner=root group="{{ openvpn_root_group }}" mode=0700 state=directory
+
+- name: Create keys directory
+  file: >
+    path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}"
+    state=directory
+    owner=root
+    group="{{ openvpn_root_group }}"
+    mode=0700
+
+- name: Create clients directory
+  file: >
+    path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}"
+    state=directory
+    owner=root
+    group="{{ openvpn_group }}"
+    mode=0755
+
+- name: Configure PKI for the server (external PKI)
+  include: configure.external_pki_server.yml
+  when:
+    - __my_openvpn_instance.openvpn_use_external_pki
+
+- name: Configure PKI for the server (easyrsa)
+  include: configure.pki_server.yml
+  when:
+    - not __my_openvpn_instance.openvpn_use_external_pki
+
+- name: PKI for the clients (easyrsa)
+  include: configure.pki_clients.yml
+  when:
+    - not __my_openvpn_instance.openvpn_use_external_pki
+
+- name: Generate tls-auth key
+  command: openvpn --genkey --secret {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{__my_openvpn_instance.openvpn_keydir }}/ta.key
+  args: 
+    creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{__my_openvpn_instance.openvpn_keydir }}/ta.key"
+  when: __my_openvpn_instance.openvpn_tls_auth
+  notify: service restart
+
+- name: Script to check username vs common name
+  template: >
+    src=verify-cn-username.sh.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/verif-cn-username.sh
+    mode=0750
+    owner=root group={{ openvpn_group }}
+  when: 
+   - __my_openvpn_instance.openvpn_check_username_in_cert
+   - __my_openvpn_instance.openvpn_use_certs
+  notify: service restart
+
+- name: openvpn PAM file
+  template: >
+    src=pam.j2
+    dest={{ openvpn_system_etcdir }}/pam.d/{{ __openvpn_service_name }}
+    mode=0640
+    owner=root group={{ openvpn_group }}
+  when: __my_openvpn_instance.openvpn_use_pam
+
+- name: add virtual users in openvpn PAM password file
+  htpasswd: >
+    path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/pam_users.txt"
+    name={{ item.name }}
+    password={{ item.password }}
+    crypt_scheme=md5_crypt
+  with_items: "{{ __my_openvpn_instance.openvpn_use_pam_users  }}"
+  when: 
+    - __my_openvpn_instance.openvpn_use_pam
+    - __my_openvpn_instance.openvpn_use_pam_users
+
+- name: remove virtual users in openvpn PAM password file
+  htpasswd: >
+    path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/pam_users.txt"
+    name={{ item.name }}
+    state=absent
+  with_items: "{{ __my_openvpn_instance.openvpn_use_pam_users_remove  }}"
+  when:
+    - __my_openvpn_instance.openvpn_use_pam
+    - __my_openvpn_instance.openvpn_use_pam_users_remove
+  
+- name: simple authentication
+  template: >
+    src=simple-auth.sh.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/simple-auth.sh
+    mode=06750
+    owner=root group={{ openvpn_group }}
+  when:
+    - __my_openvpn_instance.openvpn_use_simple_auth
+    - __my_openvpn_instance.openvpn_use_simple_auth_password  
+
+- name: Configuration file
+  template: src=server.conf.j2 dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ openvpn_default_instance_name }}.conf
+  notify: service restart
+
+- name: Set ip forwarding
+  sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
+- name: Configure service
+  include: configure.service.yml

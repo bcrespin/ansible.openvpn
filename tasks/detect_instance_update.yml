@@ -1,0 +1,9 @@
+---
+- name: detect instance need service restart
+  when: taskresult.changed
+  set_fact:
+    __openvpn_instance_update: true
+
+#- name: debug __openvpn_instance_update
+#  debug: msg="{{ __openvpn_instance_update|default([]) }}"
+

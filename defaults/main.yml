@@ -14,6 +14,7 @@ openvpn_group: nobody
 openvpn_root_group: root
 openvpn_log_dir: /var/log/openvpn/
 
+__openvpn_instance_update: false
 # per instance default settings :
 __openvpn_instance_default:
   openvpn_keydir: "keys"                             # full or relative path

@@ -6,7 +6,9 @@
     mode=0600
     owner=root
     group={{ openvpn_root_group }}
-  notify: service restart
+  register: taskresult
+
+- include: detect_instance_update.yml
 
 - name: Create server key file from variable content
   copy: >
@@ -15,7 +17,9 @@
     mode=0600
     owner=root
     group={{ openvpn_root_group }}
-  notify: service restart
+  register: taskresult
+
+- include: detect_instance_update.yml
 
 - name: Create crl file from variable content
   copy: >
@@ -24,4 +28,7 @@
     mode=0600
     owner=root
     group={{ openvpn_root_group }}
-  notify: service restart
+  register: taskresult
+
+- include: detect_instance_update.yml
+

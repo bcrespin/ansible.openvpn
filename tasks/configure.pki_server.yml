@@ -31,5 +31,3 @@
   command: "{{openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-server.sh"
   args:
     creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/server.crt"
-  notify: service restart
-

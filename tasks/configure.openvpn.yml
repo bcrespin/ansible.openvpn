@@ -47,7 +47,6 @@
   args: 
     creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{__my_openvpn_instance.openvpn_keydir }}/ta.key"
   when: __my_openvpn_instance.openvpn_tls_auth
-  notify: service restart
 
 - name: Script to check username vs common name
   template: >
@@ -58,7 +57,6 @@
   when: 
    - __my_openvpn_instance.openvpn_check_username_in_cert
    - __my_openvpn_instance.openvpn_use_certs
-  notify: service restart
 
 - name: openvpn PAM file
   template: >
@@ -66,7 +64,6 @@
     dest={{ openvpn_system_etcdir }}/pam.d/{{ __openvpn_service_name }}
     mode=0640
     owner=root group={{ openvpn_group }}
-  when: __my_openvpn_instance.openvpn_use_pam
 
 - name: add virtual users in openvpn PAM password file
   htpasswd: >
@@ -88,7 +85,7 @@
   when:
     - __my_openvpn_instance.openvpn_use_pam
     - __my_openvpn_instance.openvpn_use_pam_users_remove
-  
+ 
 - name: simple authentication
   template: >
     src=simple-auth.sh.j2
@@ -101,10 +98,20 @@
 
 - name: Configuration file
   template: src=server.conf.j2 dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ openvpn_default_instance_name }}.conf
-  notify: service restart
+  register: taskresult
+
+- include: detect_instance_update.yml
 
 - name: Set ip forwarding
   sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
 
 - name: Configure service
   include: configure.service.yml
+
+
+
+# should be the last action !!
+- name: restart service {{ __openvpn_service_name }}
+  service: name={{ __openvpn_service_name }} enabled=yes state=restarted
+  when:
+    - __openvpn_instance_update|default(false)

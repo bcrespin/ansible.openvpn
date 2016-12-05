@@ -41,6 +41,7 @@
   include: configure.pki_clients.yml
   when:
     - not __my_openvpn_instance.openvpn_use_external_pki
+    - __my_openvpn_instance.openvpn_use_certs
 
 - name: Generate tls-auth key
   command: openvpn --genkey --secret {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{__my_openvpn_instance.openvpn_keydir }}/ta.key

@@ -1,0 +1,15 @@
+---
+- name: Prepare PKI shell script for clients
+  template: >
+    src=build-client_easyrsa_v{{ __openvpn_easy_var_version }}.sh.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-client.sh
+    owner=root
+    group={{ openvpn_root_group }}
+    mode=0755
+
+- name: run PKI shell script for clients
+  command: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-client.sh {{ item.name }}"
+  args:
+    creates: "{{ openvpn_system_etcdir }}/{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item.name }}.crt"
+  with_items:
+    - "{{  __my_openvpn_instance.openvpn_use_pam_users  }}"

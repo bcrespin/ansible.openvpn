@@ -1,5 +1,5 @@
 ---
-- name: Prepare PKI shell script for clients
+- name: Prepare PKI shell script to create clients certs
   template: >
     src=build-client_easyrsa_v{{ __openvpn_easy_var_version }}.sh.j2
     dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-client.sh
@@ -7,9 +7,31 @@
     group={{ openvpn_root_group }}
     mode=0755
 
-- name: run PKI shell script for clients
+- name: Prepare PKI shell script to revoke and delete clients cert
+  template: >
+    src=revoke-client_easyrsa_v{{ __openvpn_easy_var_version }}.sh.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/revoke-client.sh
+    owner=root
+    group={{ openvpn_root_group }}
+    mode=0755
+
+
+- name: Create clients certs
   command: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-client.sh {{ item.name }}"
   args:
-    creates: "{{ openvpn_system_etcdir }}/{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item.name }}.crt"
+    creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item.name }}.crt"
   with_items:
     - "{{  __my_openvpn_instance.openvpn_use_pam_users  }}"
+
+- name: debug1
+  debug: var=__my_openvpn_instance.openvpn_use_certs
+
+- name: debug2
+  debug: var=__my_openvpn_instance.openvpn_clients_certs_revoke
+
+- name: Revoke and delete clients certs
+  command: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/revoke-client.sh {{ item }}"
+  args:
+    removes: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item }}.crt"
+  with_items:
+    -  "{{ __my_openvpn_instance.openvpn_clients_certs_revoke }}"

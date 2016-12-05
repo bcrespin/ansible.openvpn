@@ -14,11 +14,13 @@ cipher {{ __my_openvpn_instance.openvpn_cipher }}
 
 dev {{ __my_openvpn_instance.openvpn_dev }}
 
-ca {{ __my_openvpn_instance.openvpn_keydir }}/ca.crt
 {% if __my_openvpn_instance.openvpn_use_external_pki %}
-cert {{ __my_openvpn_instance.openvpn_keydir }}/server.crt
-key {{ __my_openvpn_instance.openvpn_keydir }}/server.key 
+ca {{ __my_openvpn_instance.openvpn_use_external_pki_ca_file }}
+cert {{ __my_openvpn_instance.openvpn_use_external_pki_server_cert_file }}
+key {{ __my_openvpn_instance.openvpn_use_external_pki_server_key_file }}
+crl-verify {{ __my_openvpn_instance.openvpn_use_external_pki_crl_file }}
 {% else %}
+ca {{ __my_openvpn_instance.openvpn_keydir }}/ca.crt
 cert {{ __my_openvpn_instance.openvpn_keydir}}/issued/server.crt
 key {{ __my_openvpn_instance.openvpn_keydir }}/private/server.key
 {% endif %}
@@ -105,4 +107,6 @@ script-security 3 execve
 
 {% if __my_openvpn_instance.openvpn_clients_certs_revoke|length > 0 %}
 crl-verify {{ __my_openvpn_instance.openvpn_keydir }}/crl.pem
+
+
 {% endif %}

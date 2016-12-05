@@ -27,11 +27,6 @@
     group="{{ openvpn_group }}"
     mode=0755
 
-- name: Configure PKI for the server (external PKI)
-  include: configure.external_pki_server.yml
-  when:
-    - __my_openvpn_instance.openvpn_use_external_pki
-
 - name: Configure PKI for the server (easyrsa)
   include: configure.pki_server.yml
   when:
@@ -86,7 +81,7 @@
   when:
     - __my_openvpn_instance.openvpn_use_pam
     - __my_openvpn_instance.openvpn_use_pam_users_remove
- 
+
 - name: simple authentication
   template: >
     src=simple-auth.sh.j2

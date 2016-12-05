@@ -43,11 +43,13 @@ __openvpn_instance_default:
                                                     # - client-to-client
   openvpn_tls_cipher: 'TLS-DHE-RSA-WITH-AES-256-CBC-SHA'
   openvpn_tls_version_min: '1.2'
+  
   openvpn_use_external_pki: no					# if no, use exernal pki
-  openvpn_dhparam: ''
-  openvpn_ca_cert: ''
-  openvpn_server_key: ''
-  openvpn_crl: ''
+  openvpn_use_external_pki_ca_file : ''
+  openvpn_use_external_pki_crl_file: ''
+  openvpn_use_external_pki_server_crt_file: ''
+  openvpn_use_external_pki_server_key_file: ''
+
   openvpn_key_country: FR
   openvpn_key_province: FR
   openvpn_key_city: Paris
@@ -63,6 +65,7 @@ __openvpn_instance_default:
   openvpn_clients_config_dir: 'ccd'
 
   openvpn_use_certs: yes
+  openvpn_use_certs_remove: []
 
   openvpn_tls_auth: yes
  

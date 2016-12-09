@@ -5,7 +5,7 @@
 
 - name: test if instance name provided, unless use default
   set_fact:
-    openvpn_instance: "{{ __openvpn_instance_default }}"
+    openvpn_instance: "{{ openvpn_instance_default|default('__openvpn_instance_default') }}"
   when: openvpn_instance is not defined
 
 - name: merge openvpn_instance with default

@@ -44,7 +44,7 @@ __openvpn_instance_default:
   openvpn_tls_cipher: 'TLS-DHE-RSA-WITH-AES-256-CBC-SHA'
   openvpn_tls_version_min: '1.2'
   
-  openvpn_use_external_pki: no					# if no, use exernal pki
+  openvpn_use_external_pki: no
   openvpn_use_external_pki_ca_file : ''
   openvpn_use_external_pki_crl_file: ''
   openvpn_use_external_pki_server_crt_file: ''
@@ -84,7 +84,7 @@ __openvpn_instance_default:
   openvpn_ldap_follow_referrals: no
 
   openvpn_use_simple_auth: no
-  openvpn_use_simple_auth_password: ""		# sha256 encrypted password
+  openvpn_use_simple_auth_password: ""            # sha256 encrypted password
 
   openvpn_client_to_client: no
 

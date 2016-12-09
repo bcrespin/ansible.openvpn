@@ -1,5 +1,15 @@
 ---
 # tasks file for boxeman.openvpn
+- name: Gathering OS specific variables
+  include_vars: '{{ item }}'
+  with_first_found:
+    - files:
+      - "{{ ansible_distribution }}.{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: 'true'
+  tags: [ 'openvpn' ]
+
 - name: setup name of service default instance
   set_fact:
     __openvpn_service_name: "{{ openvpn_default_service_name }}"

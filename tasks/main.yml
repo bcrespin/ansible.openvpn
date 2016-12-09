@@ -13,7 +13,7 @@
 - name: setup name of service default instance
   set_fact:
     __openvpn_service_name: "{{ openvpn_default_service_name }}"
-  when: openvpn_instance_name == 'default'
+  when: openvpn_instance_name|default('default') == 'default'
   tags: ['openvpn']
 
 - name:  setup name of service for named instance

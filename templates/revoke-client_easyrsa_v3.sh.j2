@@ -10,5 +10,9 @@ if [ -f "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvp
   rm {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/$1.crt &&\
   rm {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/reqs/$1.req &&\
   rm {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/private/$1.key
-
 fi
+
+if [ -f "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}/$1" ]; then
+  rm {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}/$1
+fi
+

@@ -1,14 +1,4 @@
 ---
-
-- name: Gathering OS specific variables
-  include_vars: '{{ item }}'
-  with_first_found:
-    - files:
-      - "{{ ansible_distribution }}.{{ ansible_distribution_release }}.yml"
-      - "{{ ansible_distribution }}.yml"
-      - "{{ ansible_os_family }}.yml"
-      skip: 'true'
-
 - name: OS unsupported
   fail: msg=" This roles is currently unsupported with your OS/Linux Distro"
   when: openvpn_role_supported is undefined

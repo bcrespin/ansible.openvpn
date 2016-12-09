@@ -60,7 +60,9 @@
     dest={{ openvpn_system_etcdir }}/pam.d/{{ __openvpn_service_name }}
     mode=0640
     owner=root group={{ openvpn_group }}
-
+  when:
+    - __my_openvpn_instance.openvpn_use_pam
+    
 - name: add virtual users in openvpn PAM password file
   htpasswd: >
     path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/pam_users.txt"

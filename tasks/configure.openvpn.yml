@@ -26,6 +26,15 @@
     owner=root
     group="{{ openvpn_group }}"
     mode=0755
+    
+- name: clients ccd content
+  template: src=ccd_file.j2 dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}/{{ item.key }}
+  with_dict: "{{ __my_openvpn_instance.openvpn_clients_config|default({}) }}"
+
+- name: Configure PKI for the server (easyrsa)
+  include: configure.pki_server.yml
+  when:
+    - not __my_openvpn_instance.openvpn_use_external_pki
 
 - name: Configure PKI for the server (easyrsa)
   include: configure.pki_server.yml

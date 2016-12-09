@@ -11,6 +11,8 @@
 
 - name: symlink non-default instance service script (FreeBSD)
   file: src=/usr/local/etc/rc.d/openvpn dest="/usr/local/etc/rc.d/{{ __openvpn_service_name }}" state=link
+  when:
+    - openvpn_instance_name != 'default'
 
 # ensure qservice is started even if no config change
 - name: Configure service (FreeBSD)

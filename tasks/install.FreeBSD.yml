@@ -12,8 +12,13 @@
    - __my_openvpn_instance.openvpn_use_pam
    - __my_openvpn_instance.openvpn_use_pam_users
 
+- name: Create pam.d directory (FreeBSD)
+  file: >
+    path=/usr/local/etc/pam.d state=directory owner=root group="{{ openvpn_root_group }}" mode=0755 state=directory
+  when:
+    - __my_openvpn_instance.openvpn_use_pam
+
 - name: Install easyrsa (FreeBSD)
   pkgng: name=easy-rsa state=present
   when: 
    - not __my_openvpn_instance.openvpn_use_external_pki
-   - __my_openvpn_instance.openvpn_use_certs

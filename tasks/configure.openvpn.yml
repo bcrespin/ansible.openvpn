@@ -71,7 +71,7 @@
     owner=root group={{ openvpn_group }}
   when:
     - __my_openvpn_instance.openvpn_use_pam
-    
+  
 - name: add virtual users in openvpn PAM password file
   htpasswd: >
     path="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/pam_users.txt"
@@ -97,7 +97,7 @@
   template: >
     src=simple-auth.sh.j2
     dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/simple-auth.sh
-    mode=06750
+    mode=0750
     owner=root group={{ openvpn_group }}
   when:
     - __my_openvpn_instance.openvpn_use_simple_auth
@@ -112,10 +112,9 @@
 - name: Set ip forwarding
   sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
 
+# should be before the last action !!
 - name: Configure service
   include: configure.service.yml
-
-
 
 # should be the last action !!
 - name: restart service {{ __openvpn_service_name }}

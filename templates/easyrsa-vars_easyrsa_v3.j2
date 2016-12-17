@@ -3,7 +3,12 @@
 
 export EASYRSA="{{ openvpn_easyrsa_v3_dir }}"
 
+{% if ansible_os_family == "OpenBSD" %}
+export EASYRSA_OPENSSL="eopenssl"
+{%else %}
 export EASYRSA_OPENSSL="openssl"
+{% endif %}
+
 
 export EASYRSA_PKI="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir  }}"
 

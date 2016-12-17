@@ -16,17 +16,18 @@
   fail: msg="ldap authentication still not implemented"
   when: __my_openvpn_instance.openvpn_use_ldap
 
-- name: check simple auth must have a password
-  fail: msg="simple authentication need a password" 
-  when: 
-    - __my_openvpn_instance.openvpn_use_simple_auth
-    - not __my_openvpn_instance.openvpn_use_simple_auth_password
+- name: check bsdauth only for OpenBSD
+  fail: msg=" openvpn_use_bsdauth yes , only for OpenBSD!"
+  when:
+    - ansible_os_family != "OpenBSD"
+    - __my_openvpn_instance.openvpn_use_bsdauth
 
-#- name: debug __my_openvpn_instance
-#  debug: var=__my_openvpn_instance
+- name: check PAM authentication not for OpenBSD
+  fail: msg=" openvpn_use_pam yes , NOT for OpenBSD!"
+  when:
+    - ansible_os_family == "OpenBSD"
+    - __my_openvpn_instance.openvpn_use_pam
 
-#- name: debug
-#  debug: var=openvpn_instance_name
 - name: check if at least one authentication is enabled
   debug: msg="NO authentication option enabled..." 
   when: 
@@ -34,16 +35,26 @@
     - not __my_openvpn_instance.openvpn_use_ldap
     - not __my_openvpn_instance.openvpn_use_certs
     - not __my_openvpn_instance.openvpn_use_simple_auth
-    - not __my_openvpn_instance.openvpn_use_tls_auth
+    - not __my_openvpn_instance.openvpn_use_bsdauth
   register: result
 
 - name: fail as no authentication option enabled 
   fail: msg="NO authentication option enabled..."
   when: not result|skipped
 
+- name: check simple auth must have a password
+  fail: msg="simple authentication need a password"
+  when:
+    - __my_openvpn_instance.openvpn_use_simple_auth
+    - not __my_openvpn_instance.openvpn_use_simple_auth_password
+
 - name: Install (FreeBSD)
   include: install.FreeBSD.yml
   when: ansible_os_family == "FreeBSD"
+
+- name: Install (OpenBSD)
+  include: install.OpenBSD.yml
+  when: ansible_os_family == "OpenBSD"
 
 - name: Configure Openvpn
   include: configure.openvpn.yml

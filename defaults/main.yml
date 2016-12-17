@@ -68,6 +68,9 @@ __openvpn_instance_default:
   openvpn_use_certs_remove: []
 
   openvpn_tls_auth: yes
+  
+  openvpn_use_bsdauth: no
+  openvpn_use_bsdauth_users: []
  
   openvpn_use_pam: no
   openvpn_use_pam_group_members: ''

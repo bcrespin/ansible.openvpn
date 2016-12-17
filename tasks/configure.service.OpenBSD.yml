@@ -1,0 +1,9 @@
+---
+- name: create startup script (OpenBSD)
+  template: src=rc_script.OpenBSD.j2 dest=/etc/rc.d/{{ __openvpn_service_name }} owner=root group={{ openvpn_root_group }} mode=0755
+
+- name: Configure service (OpenBSD)
+  service: name={{ __openvpn_service_name }} enabled=yes state=started
+  when: 
+    - not __openvpn_instance_update|default(true)
+

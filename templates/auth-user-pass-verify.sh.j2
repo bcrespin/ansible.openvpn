@@ -61,7 +61,7 @@ simple_auth() {
 auth_file() {
 	ENCRYPTED_PROPOSED_PWD=`echo $password| $CRYPT_BIN | awk '{ print $1}' `
 	USER_PWD=`grep $username {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth_file  | awk -F: '{print $2}'`
-	if [ "$USER_PWD" == "ENCRYPTED_PROPOSED_PWD" ]
+	if [ "$USER_PWD" == "ENCRYPTED_PROPOSED_PWD" ]; then
 		return $CHECK_VERIFY_OK
 	else
 		exit $VERIFY_AUTH_FILE_PASSWORD_ERROR

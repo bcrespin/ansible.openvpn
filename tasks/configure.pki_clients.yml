@@ -18,7 +18,7 @@
 - name: Create clients certs
   command: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/build-client.sh {{ item.name }}"
   args:
-    creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item.name }}.crt"
+    creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item }}.crt"
   with_items:
     - "{{  __my_openvpn_instance.openvpn_clients_certs  }}"
 

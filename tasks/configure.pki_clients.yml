@@ -20,7 +20,7 @@
   args:
     creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item.name }}.crt"
   with_items:
-    - "{{  __my_openvpn_instance.openvpn_use_pam_users  }}"
+    - "{{  __my_openvpn_instance.openvpn_clients_certs  }}"
 
 - name: Revoke and delete clients certs
   command: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/revoke-client.sh {{ item }}"

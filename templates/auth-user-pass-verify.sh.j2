@@ -16,8 +16,7 @@ VERIFY_AUTH_FILE_PASSWORD_ERROR=30
 ######## functions 
 ##############################################################
 {% if __my_openvpn_instance.openvpn_check_username_in_cert %}
-function verify_cn_username()
-{
+verify_cn_username() {
 	if [ "$username" == "$common_name" ]; then
        		return $CHECK_VERIFY_OK
 	else
@@ -27,8 +26,7 @@ function verify_cn_username()
 {% endif %}
 
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password  or __my_openvpn_instance.openvpn_use_auth_file %}
-function crypt_bin()
-{
+crypt_bin() {
 	if [ -f /usr/bin/sha256sum ]; then
 		CRYPT_BIN="/usr/bin/sha256sum"
 	else
@@ -47,8 +45,7 @@ function crypt_bin()
 {% endif %}
 
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password %}
-function simple_auth()
-{
+simple_auth() {
 	CRYPT_BIN=crypt_bin()
 	ENCRYPTED_PWD={{ __my_openvpn_instance.openvpn_use_simple_auth_password }}
 	ENCRYPTED_PROPOSED_PWD=`echo $password| $CRYPT_BIN | awk '{ print $1}' `
@@ -61,8 +58,7 @@ function simple_auth()
 {% endif %}
 
 {% if __my_openvpn_instance.openvpn_use_auth_file %}
-function auth_file()
-{
+auth_file() {
 	ENCRYPTED_PROPOSED_PWD=`echo $password| $CRYPT_BIN | awk '{ print $1}' `
 	USER_PWD=`grep $username {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth_file  | awk -F: '{print $2}'`
 	if [ "$USER_PWD" == "ENCRYPTED_PROPOSED_PWD" ]

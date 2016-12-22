@@ -6,12 +6,6 @@
   openbsd_pkg: name=openvpn-auth-ldap state=present
   when: __my_openvpn_instance.openvpn_use_ldap
 
-- name: Install openvpn bsdauth (OpenBSD)
-  openbsd_pkg: name={{ item }} state=present
-  with_items: [ openvpn_bsdauth ]
-  when:
-   - __my_openvpn_instance.openvpn_use_bsdauth
-
 - name: Install easyrsa (OpenBSD)
   openbsd_pkg: name=easy-rsa state=present
   when: 

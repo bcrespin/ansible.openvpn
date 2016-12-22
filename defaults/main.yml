@@ -69,9 +69,10 @@ __openvpn_instance_default:
 
   openvpn_tls_auth: yes
   
-  openvpn_use_bsdauth: no
-  openvpn_use_bsdauth_users: []
- 
+  openvpn_use_virtualauth: no
+  openvpn_use_virtualauth_users: []
+  openvpn_use_virtualauth_users_remove: [] 
+
   openvpn_use_pam: no
   openvpn_use_pam_group_members: ''
   openvpn_use_pam_users: []                       # If empty use system users

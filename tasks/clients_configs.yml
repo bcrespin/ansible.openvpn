@@ -1,0 +1,7 @@
+---
+- name: generate openpvpn config file template
+  template: >
+    src=client.conf.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/client-template.ovpn
+    mode=0750
+    owner=root group={{ openvpn_group }}

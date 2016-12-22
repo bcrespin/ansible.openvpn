@@ -82,8 +82,8 @@ client-cert-not-required
 #client certs required by default
 {% endif %}
 
-{% if __my_openvpn_instance.openvpn_check_username_in_cert  and __my_openvpn_instance.openvpn_use_certs %}
-auth-user-pass-verify {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/verif-cn-username.sh via-env
+{% if __my_openvpn_instance.openvpn_check_username_in_cert  or __my_openvpn_instance.openvpn_use_simple_auth or __my_openvpn_instance.openvpn_use_auth_file %}
+auth-user-pass-verify {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth-user-pass-verify.sh via-env
 script-security 3
 {% endif %}
 
@@ -93,16 +93,6 @@ plugin {{ openvpn_pam_plugin_distribution }} {{ __openvpn_service_name }}
 
 {% if __my_openvpn_instance.openvpn_use_ldap %}
 plugin {{ openvpn_ldap_plugin_distribution }} {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth-ldap.conf
-{% endif %}
-
-{% if __my_openvpn_instance.openvpn_use_simple_auth and __my_openvpn_instance.openvpn_use_simple_auth_password %}
-auth-user-pass-verify {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/simple-auth.sh via-env
-script-security 3 
-{% endif %}
-
-{% if __my_openvpn_instance.openvpn_use_bsdauth %}
-auth-user-pass-verify openvpn_use_bsdauth_script via-file
-script-security 3
 {% endif %}
 
 ##### additionam options

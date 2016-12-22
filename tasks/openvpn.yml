@@ -16,12 +16,6 @@
   fail: msg="ldap authentication still not implemented"
   when: __my_openvpn_instance.openvpn_use_ldap
 
-- name: check bsdauth only for OpenBSD
-  fail: msg=" openvpn_use_bsdauth yes , only for OpenBSD!"
-  when:
-    - ansible_os_family != "OpenBSD"
-    - __my_openvpn_instance.openvpn_use_bsdauth
-
 - name: check PAM authentication not for OpenBSD
   fail: msg=" openvpn_use_pam yes , NOT for OpenBSD!"
   when:
@@ -35,7 +29,7 @@
     - not __my_openvpn_instance.openvpn_use_ldap
     - not __my_openvpn_instance.openvpn_use_certs
     - not __my_openvpn_instance.openvpn_use_simple_auth
-    - not __my_openvpn_instance.openvpn_use_bsdauth
+    - not __my_openvpn_instance.openvpn_use_virtualauth
   register: result
 
 - name: fail as no authentication option enabled 

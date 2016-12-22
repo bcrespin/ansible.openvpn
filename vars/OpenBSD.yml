@@ -9,5 +9,4 @@ openvpn_group: _openvpn
 openvpn_user: _openvpn
 openvpn_easyrsa_v3_binary: '/usr/local/share/easy-rsa/easyrsa'
 openvpn_easyrsa_v3_dir: '/usr/local/share/easy-rsa'
-openvpn_use_bsdauth_script: '/usr/local/libexec/openvpn_bsdauth'
 openvpn_ldap_plugin_distribution: '/usr/local/lib/openvpn-auth-ldap.so'

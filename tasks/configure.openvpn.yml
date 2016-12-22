@@ -53,15 +53,16 @@
     creates: "{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{__my_openvpn_instance.openvpn_keydir }}/ta.key"
   when: __my_openvpn_instance.openvpn_tls_auth
 
-- name: Script to check username vs common name
+- name: Script auth-user-pass-verify
   template: >
-    src=verify-cn-username.sh.j2
-    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/verif-cn-username.sh
+    src=auth-user-pass-verify.sh.j2
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth-user-pass-verify.sh
     mode=0750
     owner=root group={{ openvpn_group }}
   when: 
-   - __my_openvpn_instance.openvpn_check_username_in_cert
-   - __my_openvpn_instance.openvpn_use_certs
+   ( __my_openvpn_instance.openvpn_check_username_in_cert ) or
+   ( __my_openvpn_instance.openvpn_use_simple_auth ) or
+   ( __my_openvpn_instance.openvpn_use_auth_file )
 
 - name: openvpn PAM file
   template: >
@@ -93,16 +94,6 @@
     - __my_openvpn_instance.openvpn_use_pam
     - __my_openvpn_instance.openvpn_use_pam_users_remove
 
-- name: simple authentication
-  template: >
-    src=simple-auth.sh.j2
-    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/simple-auth.sh
-    mode=0750
-    owner=root group={{ openvpn_group }}
-  when:
-    - __my_openvpn_instance.openvpn_use_simple_auth
-    - __my_openvpn_instance.openvpn_use_simple_auth_password  
-
 - name: Configuration file
   template: src=server.conf.j2 dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ openvpn_default_instance_name }}.conf
   register: taskresult
@@ -112,12 +103,15 @@
 - name: Set ip forwarding
   sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
 
-# should be before the last action !!
+# should be before the last action for server part!!
 - name: Configure service
   include: configure.service.yml
 
-# should be the last action !!
+# should be the last action part !!
 - name: restart service {{ __openvpn_service_name }}
   service: name={{ __openvpn_service_name }} enabled=yes state=restarted
   when:
     - __openvpn_instance_update|default(false)
+
+- name: clients configuration stuff
+  include: clients_configs.yml

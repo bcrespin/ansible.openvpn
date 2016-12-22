@@ -11,4 +11,13 @@ daemon_flags="--daemon {{ __openvpn_service_name }} --writepid $pid_file --cd $d
 
 . /etc/rc.d/rc.subr
 
+rc_reload (){
+        if [ -f $pid_file ]; then
+                kill -USR1 `cat $pid_file`
+        else
+                return 1
+        fi
+}
+
+
 rc_cmd $1

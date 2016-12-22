@@ -33,8 +33,8 @@ crypt_bin() {
 		if [ -f /usr/bin/sha256 ]; then
 			CRYPT_BIN="/usr/bin/sha256"
 		else
-			if [ -f /sbin/sha256 ]; then
-				CRYPT_BIN="/sbin/sha256"
+			if [ -f /bin/sha256 ]; then
+				CRYPT_BIN="sbin/sha256"
 			else
 				exit $MISSING_CRYPT_BINARY
 			fi
@@ -46,7 +46,6 @@ crypt_bin() {
 
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password %}
 simple_auth() {
-	CRYPT_BIN=crypt_bin()
 	ENCRYPTED_PWD={{ __my_openvpn_instance.openvpn_use_simple_auth_password }}
 	ENCRYPTED_PROPOSED_PWD=`echo $password| $CRYPT_BIN | awk '{ print $1}' `
 	if [ "$ENCRYPTED_PROPOSED_PWD" == "$ENCRYPTED_PWD" ]; then
@@ -87,9 +86,11 @@ fi
 verify_cn_username
 {% endif %}
 {% if __my_openvpn_instance.openvpn_use_auth_file %}
+crypt_bin
 auth_file
 {% endif %}
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password %}
+crypt_bin
 simple_auth
 {% endif %}
 

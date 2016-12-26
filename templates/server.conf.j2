@@ -49,6 +49,8 @@ ifconfig-pool-persist {{__my_openvpn_instance.openvpn_ifconfig_pool_persist}}
 
 keepalive {{ __my_openvpn_instance.openvpn_keepalive }}
 
+client-config-dir  {{  __my_openvpn_instance.openvpn_clients_config_dir }}
+
 {% if __my_openvpn_instance.openvpn_comp_lzo -%}
 comp-lzo
 {% endif %}

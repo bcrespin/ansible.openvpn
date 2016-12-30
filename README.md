@@ -2,9 +2,10 @@ Role Name
 =========
 
 Configure one or more openvpn  server instances...
-primary focus to be run on FreeBSD, then  I may look for OpenBSD, then maybe on Linux
+working on FreeBSD and OpenBSD, will see later for linux
 
-for now, due to handler in ansible, if multiples roles need change, only one will lead to service reload...will see for a workaround
+ldap authentication currently not implemented
+brige mode  not currently implemented
 
 Requirements
 ------------

@@ -13,6 +13,7 @@ openvpn_user: nobody
 openvpn_group: nobody
 openvpn_root_group: root
 openvpn_log_dir: /var/log/openvpn/
+sysctl_inet_forward: net.ipv4.ip_forward
 
 __openvpn_instance_update: false
 # per instance default settings :

@@ -10,3 +10,4 @@ openvpn_easyrsa_v3_binary: '/usr/local/bin/easyrsa'
 openvpn_easyrsa_v3_dir: '/usr/local/share/easy-rsa'
 openvpn_pam_plugin_distribution: '/usr/local/lib/openvpn/plugins/openvpn-plugin-auth-pam.so'
 openvpn_ldap_plugin_distribution: '/usr/local/lib/openvpn-auth-ldap.so'
+sysctl_inet_forward: net.inet.ip.forwarding

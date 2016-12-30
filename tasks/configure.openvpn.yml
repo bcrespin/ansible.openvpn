@@ -101,7 +101,7 @@
 - include: detect_instance_update.yml
 
 - name: Set ip forwarding
-  sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+  sysctl: name={{ sysctl_inet_forward }}  value=1 sysctl_set=yes state=present reload=yes
 
 # should be before the last action for server part!!
 - name: Configure service

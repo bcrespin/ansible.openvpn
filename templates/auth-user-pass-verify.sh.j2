@@ -25,30 +25,13 @@ verify_cn_username() {
 }
 {% endif %}
 
-{% if __my_openvpn_instance.openvpn_use_simple_auth_password  or __my_openvpn_instance.openvpn_use_auth_file %}
-crypt_bin() {
-	if [ -f /usr/bin/sha256sum ]; then
-		CRYPT_BIN="/usr/bin/sha256sum"
-	else
-		if [ -f /usr/bin/sha256 ]; then
-			CRYPT_BIN="/usr/bin/sha256"
-		else
-			if [ -f /bin/sha256 ]; then
-				CRYPT_BIN="/bin/sha256"
-			else
-				exit $MISSING_CRYPT_BINARY
-			fi
-		fi
-	fi
-	return 
-}
-{% endif %}
-
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password %}
 simple_auth() {
 	ENCRYPTED_PWD={{ __my_openvpn_instance.openvpn_use_simple_auth_password }}
-	ENCRYPTED_PROPOSED_PWD=`echo $password| $CRYPT_BIN | awk '{ print $1}' `
-	if [ "$ENCRYPTED_PROPOSED_PWD" == "$ENCRYPTED_PWD" ]; then
+        SALT=`echo '{{ __my_openvpn_instance.openvpn_use_simple_auth_password }}' | cut -d '$' -f 3`
+	ENCRYPTED_PROPOSED_PWD=`openssl password -apr1 -salt $SALT $password`
+	
+        if [ "$ENCRYPTED_PROPOSED_PWD" == "$ENCRYPTED_PWD" ]; then
 		return $CHECK_VERIFY_OK
 	else
 		exit $VERIFY_SIMPLE_PASSWORD_PASSWORD_ERROR
@@ -58,8 +41,10 @@ simple_auth() {
 
 {% if __my_openvpn_instance.openvpn_use_auth_file %}
 auth_file() {
-        ENCRYPTED_PROPOSED_PWD=`eval echo $password | ${CRYPT_BIN} | awk '{ print \$1}' `
 	USER_PWD=`grep $username {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth_file  | awk -F: '{print $2}'`
+        SALT=`echo $USER_PWD  | cut -d '$' -f 3` 
+        ENCRYPTED_PROPOSED_PWD=`openssl password -apr1 -salt $SALT $password`
+
 	if [ "$USER_PWD" == "$ENCRYPTED_PROPOSED_PWD" ]; then
 		return $CHECK_VERIFY_OK
 	else
@@ -86,7 +71,6 @@ fi
 verify_cn_username
 {% endif %}
 {% if __my_openvpn_instance.openvpn_use_auth_file %}
-crypt_bin
 auth_file
 {% endif %}
 {% if __my_openvpn_instance.openvpn_use_simple_auth_password %}

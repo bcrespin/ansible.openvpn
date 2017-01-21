@@ -16,6 +16,7 @@ openvpn_log_dir: /var/log/openvpn/
 sysctl_inet_forward: net.ipv4.ip_forward
 
 __openvpn_instance_update: false
+
 # per instance default settings :
 __openvpn_instance_default:
   openvpn_keydir: "keys"                             # full or relative path
@@ -29,7 +30,7 @@ __openvpn_instance_default:
   openvpn_keepalive: "10 120"
   openvpn_ifconfig_pool_persist: ipp.txt
   openvpn_comp_lzo: yes                            
-  openvpn_auth: 'SHA1'
+  openvpn_auth: 'SHA256'
   openvpn_cipher: 'AES-256-CBC' 
   openvpn_status: openvpn-status.log
   openvpn_verb: 3
@@ -70,10 +71,8 @@ __openvpn_instance_default:
 
   openvpn_tls_auth: yes
   
-  openvpn_use_virtualauth: no
-  openvpn_use_virtualauth_users: []
-  openvpn_use_virtualauth_users_remove: [] 
-
+  openvpn_use_auth_file: no
+  
   openvpn_use_pam: no
   openvpn_use_pam_group_members: ''
   openvpn_use_pam_users: []                       # If empty use system users

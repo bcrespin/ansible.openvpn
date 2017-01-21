@@ -5,10 +5,10 @@
 
 - name: test if instance name provided, unless use default
   set_fact:
-    openvpn_instance: "{{ openvpn_instance_default|default('__openvpn_instance_default') }}"
-  when: openvpn_instance is not defined
+    openvpn_instance: "{{ openvpn_instance_default|default(__openvpn_instance_default) }}"
+  when: openvpn_instance_name == 'default'
 
-- name: merge openvpn_instance with default
+- name: merge openvpn_instance with default value
   set_fact:
     __my_openvpn_instance: "{{ __openvpn_instance_default|combine( openvpn_instance,recursive=True) }}"
 

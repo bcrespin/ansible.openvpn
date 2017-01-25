@@ -3,39 +3,34 @@
 
 client
 nobind
-dev {{ __my_openvpn_instance.openvpn_dev }}
+{% if 'tun' in __my_openvpn_instance.openvpn_dev %}
+dev tun
+{% else %}
+dev tap
+{% endif %}
 proto {{ __my_openvpn_instance.openvpn_proto }}
 cipher {{ __my_openvpn_instance.openvpn_cipher }}
-remote {{  __my_openvpn_instance.openvpn_host }} {{ __my_openvpn_instance.openvpn_port}}
+remote {{  __my_openvpn_instance.openvpn_host }} {{ __my_openvpn_instance.openvpn_port_nat|default(__my_openvpn_instance.openvpn_port) }}
 resolv-retry {{  __my_openvpn_instance.openvpn_resolv_retry }}
 auth {{ __my_openvpn_instance.openvpn_auth }}
-
-
-ca ca.crt
+ca {{ __my_openvpn_instance.openvpn_connection_alias }}/ca.crt
 {% if __my_openvpn_instance.openvpn_use_certs %}
-# specific per client
-cert client.crt
-#specific per client
-key client.key
+cert {{ __my_openvpn_instance.openvpn_connection_alias }}/{{ item|default('client') }}.crt
+key {{ __my_openvpn_instance.openvpn_connection_alias }}/{{ item|default('client') }}.key
 {% endif %}
-dh dh{{__my_openvpn_instance.openvpn_key_size }}.pem
-
+dh {{ __my_openvpn_instance.openvpn_connection_alias }}/dh{{ __my_openvpn_instance.openvpn_key_size }}.pem
 {% if __my_openvpn_instance.openvpn_tls_auth %}
-tls-auth ta.key 1
+tls-auth {{ __my_openvpn_instance.openvpn_connection_alias }}/ta.key 1
 {% endif %}
 tls-cipher {{ __my_openvpn_instance.openvpn_tls_cipher }}
 tls-version-min {{ __my_openvpn_instance.openvpn_tls_version_min }}
-
 {% if __my_openvpn_instance.openvpn_comp_lzo -%}
 comp-lzo
 {% endif %}
-
 verb {{__my_openvpn_instance.openvpn_verb}}
-
 {% if __my_openvpn_instance.openvpn_use_pam or __my_openvpn_instance.openvpn_use_ldap or __my_openvpn_instance.openvpn_use_auth_file or __my_openvpn_instance.openvpn_use_simple_auth %}
 auth-user-pass
 {% endif %}
-
 remote-cert-tls server
 # additional per client settings may be added
 

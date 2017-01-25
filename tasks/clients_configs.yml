@@ -1,7 +1,56 @@
 ---
-- name: generate openpvpn config file template
+- name: generate openpvpn client config files
   template: >
     src=client.conf.j2
-    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/client-template.ovpn
+    dest={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}/{{ __my_openvpn_instance.openvpn_connection_alias }}.ovpn
     mode=0750
     owner=root group={{ openvpn_group }}
+  with_items:
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+
+- name: create fetched folder on ansible host
+  file: path={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/{{ __my_openvpn_instance.openvpn_connection_alias }}  state=directory
+  delegate_to: localhost
+  when: __my_openvpn_instance.openvpn_clients_fetch_datas
+  with_items: "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+
+- name: get clients files ovpn
+  fetch: src={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_clients_config_dir }}/{{ __my_openvpn_instance.openvpn_connection_alias }}.ovpn dest={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/ flat=yes
+  with_items: 
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+  when: __my_openvpn_instance.openvpn_clients_fetch_datas
+
+
+- name: get CA certs for clients
+  fetch: src={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/ca.crt dest={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/{{ __my_openvpn_instance.openvpn_connection_alias }}/  flat=yes
+  with_items:
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+  when:
+    - __my_openvpn_instance.openvpn_clients_fetch_datas
+    - not __my_openvpn_instance.openvpn_use_external_pki 
+
+- name: get TA key for clients
+  fetch: src={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/ta.key dest={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/{{ __my_openvpn_instance.openvpn_connection_alias }}/  flat=yes
+  with_items:
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+  when:
+    - __my_openvpn_instance.openvpn_clients_fetch_datas
+    - not __my_openvpn_instance.openvpn_use_external_pki
+
+- name: get clients certs for clients
+  fetch: src={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/issued/{{ item }}.crt  dest={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/{{ __my_openvpn_instance.openvpn_connection_alias }}/  flat=yes
+  with_items:
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+  when:
+    - __my_openvpn_instance.openvpn_clients_fetch_datas
+    - not __my_openvpn_instance.openvpn_use_external_pki
+
+- name: get clients keys for clients
+  fetch: src={{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir }}/private/{{ item }}.key  dest={{ openvpn_fetch_folder|default('/etc/ansible/fetched/openvpn') }}/{{ item }}/{{ __my_openvpn_instance.openvpn_connection_alias }}/  flat=yes
+  with_items:
+    - "{{ __my_openvpn_instance.openvpn_clients_certs|default('client') }}"
+  when:
+    - __my_openvpn_instance.openvpn_clients_fetch_datas
+    - not __my_openvpn_instance.openvpn_use_external_pki
+
+

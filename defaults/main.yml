@@ -19,9 +19,11 @@ __openvpn_instance_update: false
 
 # per instance default settings :
 __openvpn_instance_default:
+  openvpn_clients_fetch_datas: False
   openvpn_keydir: "keys"                             # full or relative path
   # Default settings (See OpenVPN documentation)
   openvpn_host: "{{inventory_hostname}}"              # The server address
+  openvpn_connection_alias: "{{ inventory_hostname}}" 
   openvpn_port: 1194
   openvpn_proto: udp
   openvpn_dev: tun
@@ -46,7 +48,7 @@ __openvpn_instance_default:
   openvpn_tls_cipher: 'TLS-DHE-RSA-WITH-AES-256-CBC-SHA'
   openvpn_tls_version_min: '1.2'
   
-  openvpn_use_external_pki: no
+  openvpn_use_external_pki: False
   openvpn_use_external_pki_ca_file : ''
   openvpn_use_external_pki_crl_file: ''
   openvpn_use_external_pki_server_crt_file: ''
@@ -72,7 +74,8 @@ __openvpn_instance_default:
   openvpn_tls_auth: yes
   
   openvpn_use_auth_file: no
-  
+  openvpn_use_auth_file_users: []
+ 
   openvpn_use_pam: no
   openvpn_use_pam_group_members: ''
   openvpn_use_pam_users: []                       # If empty use system users

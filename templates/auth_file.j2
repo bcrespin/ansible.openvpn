@@ -1,0 +1,4 @@
+# ansible managed - do not edit by hand !
+{% for user in  __my_openvpn_instance.openvpn_use_auth_file_users %}
+{{ user.name }}:{{ user.password }}
+{% endfor %}

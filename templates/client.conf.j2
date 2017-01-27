@@ -3,11 +3,7 @@
 
 client
 nobind
-{% if 'tun' in __my_openvpn_instance.openvpn_dev %}
-dev tun
-{% else %}
-dev tap
-{% endif %}
+dev {{  __my_openvpn_instance.openvpn_dev  }}
 proto {{ __my_openvpn_instance.openvpn_proto }}
 cipher {{ __my_openvpn_instance.openvpn_cipher }}
 remote {{  __my_openvpn_instance.openvpn_host }} {{ __my_openvpn_instance.openvpn_port_nat|default(__my_openvpn_instance.openvpn_port) }}

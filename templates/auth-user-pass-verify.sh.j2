@@ -29,7 +29,7 @@ verify_cn_username() {
 simple_auth() {
 	ENCRYPTED_PWD={{ __my_openvpn_instance.openvpn_use_simple_auth_password }}
         SALT=`echo '{{ __my_openvpn_instance.openvpn_use_simple_auth_password }}' | cut -d '$' -f 3`
-	ENCRYPTED_PROPOSED_PWD=`openssl passwd -apr1 -salt $SALT $password`
+	ENCRYPTED_PROPOSED_PWD=`openssl passwd -apr1 -salt $SALT "$password"`
 	
         if [ "$ENCRYPTED_PROPOSED_PWD" == "$ENCRYPTED_PWD" ]; then
 		return $CHECK_VERIFY_OK
@@ -43,7 +43,7 @@ simple_auth() {
 auth_file() {
 	USER_PWD=`grep $username {{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/auth_file  | awk -F: '{print $2}'`
         SALT=`echo $USER_PWD  | cut -d '$' -f 3` 
-        ENCRYPTED_PROPOSED_PWD=`openssl passwd -apr1 -salt $SALT $password`
+        ENCRYPTED_PROPOSED_PWD=`openssl passwd -apr1 -salt "$SALT $password"`
 
 	if [ "$USER_PWD" == "$ENCRYPTED_PROPOSED_PWD" ]; then
 		return $CHECK_VERIFY_OK

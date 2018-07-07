@@ -12,7 +12,7 @@ export EASYRSA_OPENSSL="openssl"
 
 export EASYRSA_PKI="{{ openvpn_system_etcdir }}/{{ __openvpn_service_name }}/{{ __my_openvpn_instance.openvpn_keydir  }}"
 
-export EASYRSA_SSL_CONF="{{openvpn_easyrsa_v3_dir }}/openssl-1.0.cnf"
+export EASYRSA_SSL_CONF="{{openvpn_easyrsa_v3_dir }}/openssl-easyrsa.cnf"
 
 export EASYRSA_DN="cn_only"
 

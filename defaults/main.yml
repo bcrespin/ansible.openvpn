@@ -61,7 +61,7 @@ __openvpn_instance_default:
   openvpn_key_email: someone@somewhat
   openvpn_key_ou: ansible-team
   openvpn_key_size: 2048
-  openvpn_key_expire: 365
+  openvpn_key_expire: 1095
   openvpn_clients_certs: []                         # Make clients certificate
   openvpn_clients_certs_revoke: []                  # Revoke clients certificates
 
